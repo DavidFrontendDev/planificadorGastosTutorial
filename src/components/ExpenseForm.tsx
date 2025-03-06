@@ -2,13 +2,22 @@ import { categories } from "../data/categories";
 import DatePicker from "react-date-picker";
 import "react-calendar/dist/Calendar.css";
 import "react-date-picker/dist/DatePicker.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DraftExpense, Value } from "../types";
 import ErrorMessage from "./ErrorMessage";
 import { useBudget } from "../hooks/useBudget";
 
 function ExpenseForm() {
-  const { dispatch } = useBudget();
+  const { dispatch, state } = useBudget();
+
+  useEffect(() => {
+    if (state.editingId) {
+      const editingExpense = state.expenses.filter(
+        (currentExpense) => currentExpense.id === state.editingId
+      )[0];
+      setExpense(editingExpense);
+    }
+  }, [state.editingId]);
 
   const [expense, setExpense] = useState<DraftExpense>({
     amount: 0,
@@ -40,7 +49,14 @@ function ExpenseForm() {
       setError("Todos los campos son obligatorios");
       return;
     }
-    dispatch({ type: "add-expense", payload: { expense } });
+    if (state.editingId) {
+      dispatch({
+        type: "update-expense",
+        payload: { expense: { id: state.editingId, ...expense } },
+      });
+    } else {
+      dispatch({ type: "add-expense", payload: { expense } });
+    }
     setExpense({
       amount: 0,
       expenseName: "",
