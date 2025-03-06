@@ -1,21 +1,38 @@
-export type BudgetActions = { type: "add-buget"; payload: { budget: number } };
+export type BudgetActions =
+  | { type: "add-buget"; payload: { budget: number } }
+  | { type: "show-modal" }
+  | { type: "close-modal" };
 
 export type budgetState = {
   budget: number;
+  modal: boolean;
 };
 
 export const initialState: budgetState = {
   budget: 0,
+  modal: false,
 };
 
 export const budgetReducer = (
   state: budgetState = initialState,
-  actions: BudgetActions
+  action: BudgetActions
 ) => {
-  if (actions.type === "add-buget") {
+  if (action.type === "add-buget") {
     return {
       ...state,
-      budget: actions.payload.budget,
+      budget: action.payload.budget,
+    };
+  }
+  if (action.type === "show-modal") {
+    return {
+      ...state,
+      modal: true,
+    };
+  }
+  if (action.type === "close-modal") {
+    return {
+      ...state,
+      modal: false,
     };
   }
 
