@@ -16,7 +16,7 @@ function ExpenseList() {
             Lista de Gastos:
           </p>
           {state.expenses.map((expense) => {
-            <ExpenseDetail key={expense.id} expense={expense} />;
+            return <ExpenseDetail key={expense.id} expense={expense} />;
           })}
         </>
       )}
