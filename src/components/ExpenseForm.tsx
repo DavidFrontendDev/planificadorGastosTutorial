@@ -42,7 +42,7 @@ function ExpenseForm() {
     const isAmountField = ["amount"].includes(name);
     setExpense({
       ...expense,
-      [name]: isAmountField ? +value : value,
+      [name]: isAmountField ? (value === "" ? "" : +value) : value,
     });
   };
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -51,6 +51,7 @@ function ExpenseForm() {
       setError("Todos los campos son obligatorios");
       return;
     }
+
     if (expense.amount - previousAmount > remainingBudget) {
       setError("Ese gasto se sale del presupuesto");
       return;
