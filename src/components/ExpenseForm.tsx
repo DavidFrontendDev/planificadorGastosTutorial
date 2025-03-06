@@ -8,7 +8,8 @@ import ErrorMessage from "./ErrorMessage";
 import { useBudget } from "../hooks/useBudget";
 
 function ExpenseForm() {
-  const { dispatch, state } = useBudget();
+  const { dispatch, state, remainingBudget } = useBudget();
+  const [previousAmount, setPreviousAmount] = useState(0);
 
   useEffect(() => {
     if (state.editingId) {
@@ -16,6 +17,7 @@ function ExpenseForm() {
         (currentExpense) => currentExpense.id === state.editingId
       )[0];
       setExpense(editingExpense);
+      setPreviousAmount(editingExpense.amount);
     }
   }, [state.editingId]);
 
@@ -49,6 +51,10 @@ function ExpenseForm() {
       setError("Todos los campos son obligatorios");
       return;
     }
+    if (expense.amount - previousAmount > remainingBudget) {
+      setError("Ese gasto se sale del presupuesto");
+      return;
+    }
     if (state.editingId) {
       dispatch({
         type: "update-expense",
@@ -63,6 +69,7 @@ function ExpenseForm() {
       category: "",
       date: new Date(),
     });
+    setPreviousAmount(0);
   };
 
   return (
